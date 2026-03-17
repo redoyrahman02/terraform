@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 module "dev_group" {
-  source = "terraform-aws-modules/iam/aws//modules/iam-group-with-policies"
+  source = "../../modules/iam/group"
 
   name = "dev-group"
   custom_group_policy_arns = [
@@ -12,4 +12,9 @@ module "dev_group" {
     "arn:aws:iam::aws:policy/AdministratorAccess-Amplify"
   ]
   attach_iam_self_management_policy = false
+
+  tags = {
+    Environment = "dev"
+    ManagedBy   = "terraform"
+  }
 }
