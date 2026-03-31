@@ -1,3 +1,8 @@
+variable "name" {
+  description = "Name to be used on all the resources as identifier"
+  type        = string
+}
+
 variable "ami" {
   description = "The AMI to use for the instance"
   type        = string

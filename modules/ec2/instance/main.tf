@@ -23,5 +23,10 @@ resource "aws_instance" "this" {
     }
   }
 
-  tags = var.tags
+  tags = merge(
+    {
+      "Name" = var.name
+    },
+    var.tags
+  )
 }
