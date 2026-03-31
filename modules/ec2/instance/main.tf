@@ -1,12 +1,16 @@
+locals {
+  computed_sg_ids = compact(concat(
+    coalesce(var.vpc_security_group_ids, []),
+    aws_security_group.this[*].id
+  ))
+}
+
 resource "aws_instance" "this" {
   ami           = var.ami
   instance_type = var.instance_type
 
-  subnet_id = var.subnet_id
-  vpc_security_group_ids = compact(concat(
-    var.vpc_security_group_ids != null ? var.vpc_security_group_ids : [],
-    var.create_security_group ? [aws_security_group.this[0].id] : []
-  ))
+  subnet_id                   = var.subnet_id
+  vpc_security_group_ids      = length(local.computed_sg_ids) > 0 ? local.computed_sg_ids : null
   key_name                    = var.key_name
   iam_instance_profile        = var.iam_instance_profile
   associate_public_ip_address = var.associate_public_ip_address
