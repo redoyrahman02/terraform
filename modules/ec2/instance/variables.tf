@@ -61,3 +61,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "create_eip" {
+  description = "Whether to create an Elastic IP for the instance"
+  type        = bool
+  default     = false
+}
