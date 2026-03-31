@@ -32,3 +32,8 @@ output "eip_public_ip" {
   description = "The Elastic IP address associated with the instance"
   value       = var.create_eip ? aws_eip.this[0].public_ip : null
 }
+
+output "security_group_id" {
+  description = "The ID of the conditionally created Security Group"
+  value       = var.create_security_group ? aws_security_group.this[0].id : null
+}

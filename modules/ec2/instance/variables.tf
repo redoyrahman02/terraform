@@ -67,3 +67,27 @@ variable "create_eip" {
   type        = bool
   default     = false
 }
+
+variable "create_security_group" {
+  description = "Whether to create a security group for the instance"
+  type        = bool
+  default     = false
+}
+
+variable "vpc_id" {
+  description = "VPC ID where the security group will be created (required if create_security_group is true)"
+  type        = string
+  default     = null
+}
+
+variable "ingress_ports" {
+  description = "List of ingress ports to open in the newly created security group"
+  type        = list(number)
+  default     = []
+}
+
+variable "ingress_cidr_blocks" {
+  description = "List of CIDR blocks to allow for the ingress_ports"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}

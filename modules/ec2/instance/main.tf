@@ -2,8 +2,11 @@ resource "aws_instance" "this" {
   ami           = var.ami
   instance_type = var.instance_type
 
-  subnet_id                   = var.subnet_id
-  vpc_security_group_ids      = var.vpc_security_group_ids
+  subnet_id = var.subnet_id
+  vpc_security_group_ids = compact(concat(
+    var.vpc_security_group_ids != null ? var.vpc_security_group_ids : [],
+    var.create_security_group ? [aws_security_group.this[0].id] : []
+  ))
   key_name                    = var.key_name
   iam_instance_profile        = var.iam_instance_profile
   associate_public_ip_address = var.associate_public_ip_address
@@ -39,6 +42,37 @@ resource "aws_eip" "this" {
   tags = merge(
     {
       "Name" = format("%s-eip", var.name)
+    },
+    var.tags
+  )
+}
+
+resource "aws_security_group" "this" {
+  count       = var.create_security_group ? 1 : 0
+  name        = format("%s-sg", var.name)
+  description = "Security group for ${var.name}"
+  vpc_id      = var.vpc_id
+
+  dynamic "ingress" {
+    for_each = var.ingress_ports
+    content {
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      cidr_blocks = var.ingress_cidr_blocks
+    }
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(
+    {
+      "Name" = format("%s-sg", var.name)
     },
     var.tags
   )
